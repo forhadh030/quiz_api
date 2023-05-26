@@ -1,0 +1,43 @@
+*, *::after, *::before {
+    box-sizing: border-box;
+    list-style-type: circle;
+    margin: 0;
+    padding: 0;
+    border: 0;
+}
+
+h1 {
+    width: 80%;
+    margin: 15px;
+    text-align: center;
+    border-bottom: 1px solid black;
+}
+
+h3, h4, h5{
+    margin: 10px 0 15px 0;
+}
+
+p {
+    margin: 10px 0 10px 0;
+}
+
+.container {
+    border: 1px solid red;
+    height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    
+}
+
+.ribbon {
+    border: 1px solid blue;
+    width: 50vw;
+    height: auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    background: lightgray;
+    padding-bottom: 15px;
+}
