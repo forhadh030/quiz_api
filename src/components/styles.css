@@ -23,21 +23,21 @@ p {
 
 .container {
     border: 1px solid red;
-    height: 100vh;
+    min-height: 800px;
     display: flex;
     align-items: center;
     justify-content: center;
-    
+    background: lightgray;
 }
 
 .ribbon {
-    border: 1px solid blue;
-    width: 50vw;
-    height: auto;
+    border: 2px solid black;
+    width: 600px;
+    height: 400px;
     display: flex;
     align-items: center;
     justify-content: center;
     flex-direction: column;
-    background: lightgray;
     padding-bottom: 15px;
+    background: white;
 }

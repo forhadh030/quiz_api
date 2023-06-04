@@ -1,3 +1,4 @@
+// Function to get a session token
 export async function getSessionToken() {
   let tokenUrl = 'https://opentdb.com/api_token.php?command=request';
 
@@ -15,6 +16,7 @@ export async function getSessionToken() {
   }
 }
 
+// Function to reset the session token
 export async function resetSessionToken(token) {
   let resetUrl = `https://opentdb.com/api_token.php?command=reset&token=${token}`;
 
@@ -28,14 +30,18 @@ export async function resetSessionToken(token) {
   }
 }
 
-// Call this function when you want to reset the session token
-async function resetToken() {
+// Function to fetch quiz questions
+export async function fetchQuizQuestions() {
   try {
-    await resetSessionToken('4589e514b009a90070ba27bff6f66a81463144ee7b2c2f6a0e744134e1b587d9');
-    console.log('Token reset successful');
+    let token = await getSessionToken();
+    let apiUrl = `https://opentdb.com/api.php?amount=10&category=29&difficulty=easy&type=multiple&token=${token}`;
+
+    const response = await fetch(apiUrl);
+    const data = await response.json();
+
+    return data;
   } catch (error) {
-    console.error('Error resetting token:', error);
+    console.error('Error:', error);
+    throw error;
   }
 }
-
-resetToken();

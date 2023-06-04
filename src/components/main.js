@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { fetchQuizQuestions } from '../utils/QuizQuestions';
+import { fetchQuizQuestions, getSessionToken } from '../utils/QuizQuestions';
 import { resetSessionToken } from '../utils/apiHelpers';
 import './styles.css';
 import './buttons.css';
@@ -14,33 +14,27 @@ function QuizContainer() {
   const [selectedAnswers, setSelectedAnswers] = useState([]);
   const [submitted, setSubmitted] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
-  const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0); // New state variable
+  const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        await fetchQuizQuestions()
-          .then((data) => {
-            console.log('API Response:', data);
-            if (data.response_code === 0) {
-              const initialSelectedAnswers = data.results.map(() => null);
-              setQuestions(data.results);
-              setSelectedAnswers(initialSelectedAnswers);
-            } else {
-              console.error('API Error:', data);
-              if (data.response_code === 4) {
-                // Handle the case when no questions are available
-                setErrorMessage('No questions available. Please try again later.');
-              } else {
-                // Handle other API errors
-                setErrorMessage('An error occurred while fetching questions.');
-              }
-            }
-          })
-          .catch((error) => {
-            console.error('Error:', error);
+        const sessionToken = await getSessionToken();
+        const data = await fetchQuizQuestions(sessionToken);
+        if (data.response_code === 0) {
+          const initialSelectedAnswers = data.results.map(() => null);
+          setQuestions(data.results);
+          setSelectedAnswers(initialSelectedAnswers);
+        } else if(data.response_code === 3) {
+          setErrorMessage('No questions available. Please try again later.');
+        } else {
+          console.error('API Error:', data);
+          if (data.response_code === 4) {
+            setErrorMessage('No questions available. Please try again later.');
+          } else {
             setErrorMessage('An error occurred while fetching questions.');
-          });
+          }
+        }
       } catch (error) {
         console.error('Error:', error);
         setErrorMessage('An error occurred while fetching questions.');
@@ -78,7 +72,7 @@ function QuizContainer() {
   return (
     <div className='container'>
       <div className='ribbon'>
-      <h1>Welcome to the Quiz Game!</h1>
+        <h1>Welcome to the Quiz Game!</h1>
         {errorMessage && <p>{errorMessage}</p>}
         {questions.length > 0 && (
           <div>
@@ -87,12 +81,14 @@ function QuizContainer() {
             <ul>
               {questions[currentQuestionIndex].incorrect_answers.map(
                 (answer, ansIndex) => (
-                    <li
-                      key={ansIndex}
-                      onClick={() => handleAnswerSelection(currentQuestionIndex, answer)}
-                    >
-                      {answer}
-                    </li>
+                  <li
+                    key={ansIndex}
+                    onClick={() =>
+                      handleAnswerSelection(currentQuestionIndex, answer)
+                    }
+                  >
+                    {answer}
+                  </li>
                 )
               )}
               <li
@@ -110,7 +106,10 @@ function QuizContainer() {
           </div>
         )}
         <div className='buttons'>
-          <button onClick={handlePreviousQuestion} disabled={currentQuestionIndex === 0}>
+          <button
+            onClick={handlePreviousQuestion}
+            disabled={currentQuestionIndex === 0}
+          >
             Previous
           </button>
           <button onClick={handleNextQuestion} disabled={submitted}>
