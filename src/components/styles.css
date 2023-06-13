@@ -23,7 +23,7 @@ p {
 
 .container {
     border: 1px solid red;
-    min-height: 800px;
+    min-height: 100vh;
     display: flex;
     align-items: center;
     justify-content: center;
